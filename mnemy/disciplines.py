@@ -13,7 +13,11 @@ from mnemy.utils import openFileMultipleOs
 from mnemy.utils import smartRawInput
 from mnemy.training import *
 import pickle
-import winsound
+
+if os.name == 'nt':
+    import winsound
+else:
+    import subprocess
 
 
 
@@ -106,7 +110,11 @@ class Feat:
         """
         with open(self.tempFile, 'w') as f:
             pass
-        openFileMultipleOs(self.tempFile)# windows only, for mac : os.system("open "+filename)
+
+        if os.name == 'nt':
+            openFileMultipleOs(self.tempFile)# windows only, for mac : os.system("open "+filename)
+        else:
+            os.system("open "+filename) #TODO !!!
 
     def buildAnswerFromFile(self,fname):
         """ Read the recall file given by the user """
@@ -367,7 +375,10 @@ class SpokenNumbers(Feat):  # TODO: much
         return random.randint(0, 9)
 
     def beep(self,sound):
-        winsound.PlaySound(soundpath+'%s.wav' % sound, winsound.SND_FILENAME)
+        if os.name == 'nt':
+            winsound.PlaySound(soundpath+'%s.wav' % sound, winsound.SND_FILENAME)
+        else:
+            subprocess.call(["afplay", soundpath+'%s.wav' % sound])
 
     def displayLearningMaterial(self,n,f):
         answer=""
